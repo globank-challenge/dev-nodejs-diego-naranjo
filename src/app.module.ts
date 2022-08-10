@@ -7,6 +7,7 @@ import { OrganizationModule } from './organization/organization.module';
 import { TribeModule } from './tribe/tribe.module';
 import { RepositoryModule } from './repository/repository.module';
 import { MetricsModule } from './metrics/metrics.module';
+import { MockModule } from './mock/mock.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { MetricsModule } from './metrics/metrics.module';
     OrganizationModule,
     TribeModule,
     RepositoryModule,
-    MetricsModule
+    MetricsModule,
+    MockModule
   ],
   controllers: [AppController],
   providers: [AppService],
