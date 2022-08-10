@@ -26,7 +26,7 @@ import { MockModule } from './mock/mock.module';
     TribeModule,
     RepositoryModule,
     MetricsModule,
-    MockModule
+    MockModule,
   ],
   controllers: [AppController],
   providers: [AppService],
