@@ -1,6 +1,5 @@
-import { Metric } from "src/metrics/entities/metric.entity";
 import { Tribe } from "src/tribe/entities/tribe.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Repository {
@@ -9,14 +8,16 @@ export class Repository {
   id: number;
 
   @Column({
-    type: "text"
+    type: "varchar",
+    length: 50
   })
   name: string;
 
   @Column({
-    type: "text",
+    type: "varchar",
+    length: 1
   })
-  state: string
+  state: string[]
 
   @Column({
     type: "timestamptz",
@@ -25,9 +26,10 @@ export class Repository {
   create_time: string;
 
   @Column({
-    type: "text",
+    type: "varchar",
+    length: 1
   })
-  status: string
+  status: string[]
 
   @ManyToOne(() => Tribe,
     tribe => tribe.repository

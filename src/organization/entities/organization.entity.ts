@@ -4,12 +4,14 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Organization {
 
+
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({
-    type: "text",
-    unique: true
+    type: "varchar",
+    unique: true,
+    length: 50
   })
   name: string;
 
@@ -19,7 +21,7 @@ export class Organization {
   status: number;
 
   @OneToMany(() => Tribe,
-    tribe => tribe
+    tribe => tribe.organization
   )
   tribes: Tribe[]
 }

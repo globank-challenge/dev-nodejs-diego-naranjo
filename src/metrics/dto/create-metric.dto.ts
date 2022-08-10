@@ -1,4 +1,5 @@
 import { IsInt, IsNumber, IsPositive } from "class-validator";
+import { Repository } from "src/repository/entities/repository.entity";
 
 export class CreateMetricDto {
   @IsNumber()
@@ -20,4 +21,8 @@ export class CreateMetricDto {
   @IsInt()
   @IsPositive()
   code_smells: number;
+
+  @IsNumber()
+  @IsPositive()
+  repository: Repository
 }

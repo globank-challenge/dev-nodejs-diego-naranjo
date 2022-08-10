@@ -9,7 +9,8 @@ export class Tribe {
   id: number;
 
   @Column({
-    type: "text"
+    type: "varchar",
+    length: 50
   })
   name: string;
 

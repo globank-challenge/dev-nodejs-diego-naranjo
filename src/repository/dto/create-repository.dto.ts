@@ -1,5 +1,6 @@
 
-import { IsDate, IsString, MaxLength, MinLength } from "class-validator";
+import { IsDate, IsIn, IsNumber, IsPositive, IsString, MaxLength, MinLength } from "class-validator";
+import { Tribe } from "src/tribe/entities/tribe.entity";
 
 export class CreateRepositoryDto {
 
@@ -8,12 +9,17 @@ export class CreateRepositoryDto {
   name: string;
 
   @IsString()
-  @MinLength(1)
-  @MaxLength(1)
+  @IsIn(['E', 'D', 'A'])
   state: string;
 
+  @IsDate()
+  create_time: string;
+
   @IsString()
-  @MinLength(1)
-  @MaxLength(1)
+  @IsIn(['A', 'I'])
   status: string;
+
+  @IsNumber()
+  @IsPositive()
+  tribe: Tribe
 }

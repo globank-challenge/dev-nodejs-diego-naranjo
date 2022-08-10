@@ -1,5 +1,6 @@
 
 import { IsNumber, IsPositive, IsString, MaxLength } from "class-validator";
+import { Organization } from "src/organization/entities/organization.entity";
 
 export class CreateTribeDto {
   @IsString()
@@ -9,5 +10,9 @@ export class CreateTribeDto {
   @IsNumber()
   @IsPositive()
   status: number;
+
+  @IsNumber()
+  @IsPositive()
+  organization: Organization;
 
 }
