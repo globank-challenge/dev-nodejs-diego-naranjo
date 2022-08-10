@@ -1,1 +1,1 @@
-export class CreateRepositoryDto {}
+export class CreateRepositoryDto { }

@@ -1,1 +1,1 @@
-export class CreateMetricDto {}
+export class CreateMetricDto { }

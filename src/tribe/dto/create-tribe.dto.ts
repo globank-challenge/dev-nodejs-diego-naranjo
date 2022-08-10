@@ -1,1 +1,1 @@
-export class CreateTribeDto {}
+export class CreateTribeDto { }
