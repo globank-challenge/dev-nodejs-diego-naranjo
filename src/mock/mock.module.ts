@@ -4,6 +4,7 @@ import { MockController } from './mock.controller';
 
 @Module({
   controllers: [MockController],
-  providers: [MockService]
+  providers: [MockService],
+  exports: [MockService]
 })
 export class MockModule { }

@@ -6,12 +6,15 @@ import { UpdateRepositoryDto } from './dto/update-repository.dto';
 import { TribeDto } from './dto/tribe.dto';
 import { Repository as Repo } from './entities/repository.entity';
 import { Metric } from 'src/metrics/entities/metric.entity';
+import { MockService } from 'src/mock/mock.service';
 
 @Injectable()
 export class RepositoryService {
 
   constructor(
-    private readonly dataSource: DataSource
+    private readonly dataSource: DataSource,
+
+    private readonly mockService: MockService
   ) { }
 
   create(createRepositoryDto: CreateRepositoryDto) {
@@ -33,13 +36,19 @@ export class RepositoryService {
 
     if (metrics.length === 0) throw new NotFoundException('La tribu no se encuentra registrada');
 
+    const reposId = metrics.map(metric => metric.repositoryId);
+
+    const reposMock = this.mockService.findAll()
+
+    const repositoriesWithState = reposId.map(repoId => reposMock.repositories.filter(({ id }) => id === repoId)[0])
+
     const stateRepository = {
       'E': 'Habilitado',
       'D': 'Inhabilitado',
       'A': 'Archivado',
     }
 
-    return {
+    const response = {
       repositories: metrics.map(metric => {
         return {
           id: metric.repository.id,
@@ -56,8 +65,20 @@ export class RepositoryService {
         }
       })
     }
-  }
 
+    const verificationState = {
+      604: "Verificado",
+      605: "En espera",
+      606: "Aprobado"
+    }
+
+    return response.repositories.map(repo => {
+      return {
+        ...repo,
+        verificationState: verificationState[repositoriesWithState.find(({ id }) => id === repo.id).state]
+      }
+    })
+  }
 
   findOne(id: number) {
     return `This action returns a #${id} repository`;
