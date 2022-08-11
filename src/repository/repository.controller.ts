@@ -8,28 +8,9 @@ import { QueryDto } from './dto/query.dto';
 export class RepositoryController {
   constructor(private readonly repositoryService: RepositoryService) { }
 
-  @Post()
-  create(@Body() createRepositoryDto: CreateRepositoryDto) {
-    return this.repositoryService.create(createRepositoryDto);
-  }
-
   @Get()
   findAll(@Query() tribeDto: QueryDto) {
     return this.repositoryService.findAll(tribeDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.repositoryService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRepositoryDto: UpdateRepositoryDto) {
-    return this.repositoryService.update(+id, updateRepositoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.repositoryService.remove(+id);
-  }
 }

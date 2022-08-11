@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsOptional, IsPositive } from "class-validator";
+import { IsDate, IsIn, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
 
 export class QueryDto {
   @IsOptional()
@@ -13,9 +13,9 @@ export class QueryDto {
   date?: number
 
   @IsOptional()
-  @IsPositive()
-  @Type(() => Number)
-  state?: number
+  @IsString()
+  @IsIn(['E', 'D', 'A', 'e', 'd', 'a'])
+  state?: string
 
   @IsOptional()
   @IsPositive()

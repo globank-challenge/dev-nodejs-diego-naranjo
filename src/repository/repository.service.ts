@@ -17,12 +17,8 @@ export class RepositoryService {
     private readonly mockService: MockService
   ) { }
 
-  create(createRepositoryDto: CreateRepositoryDto) {
-    return 'This action adds a new repository';
-  }
-
   async findAll(queryDto: QueryDto) {
-    const { tribe, coverage = 0, date = new Date().getFullYear(), state } = queryDto;
+    const { tribe, coverage = 0, date = new Date().getFullYear(), state = 'E' } = queryDto;
     const metrics = await this.dataSource.getRepository(Metric).find({
       relations: ['repository', 'repository.tribe', 'repository.tribe.organization'],
       where: {
@@ -47,7 +43,11 @@ export class RepositoryService {
     const reposInThisYear = coverageUpParameter.filter(({ repository }) => isDateInThisYear(repository.create_time));
     if (reposInThisYear.length === 0) throw new NotFoundException('La tribu no tiene repositorios en el año señalado');
 
-    const reposId = reposInThisYear.map(metric => metric.repositoryId);
+    const reposInTheState = reposInThisYear.filter(({ repository }) => repository.state[0] === state.toUpperCase());
+    if (reposInTheState.length === 0) throw new NotFoundException('La tribu no tiene repositorios en el estado señalado');
+
+
+    const reposId = reposInTheState.map(metric => metric.repositoryId);
 
     const reposMock = this.mockService.findAll()
 
@@ -60,7 +60,7 @@ export class RepositoryService {
     }
 
     const response = {
-      repositories: reposInThisYear.map(metric => {
+      repositories: reposInTheState.map(metric => {
         return {
           id: metric.repository.id,
           name: metric.repository.name,
@@ -92,15 +92,4 @@ export class RepositoryService {
     })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} repository`;
-  }
-
-  update(id: number, updateRepositoryDto: UpdateRepositoryDto) {
-    return `This action updates a #${id} repository`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} repository`;
-  }
 }
