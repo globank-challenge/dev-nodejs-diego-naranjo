@@ -33,7 +33,29 @@ export class RepositoryService {
 
     if (metrics.length === 0) throw new NotFoundException('La tribu no se encuentra registrada');
 
-    return metrics;
+    const stateRepository = {
+      'E': 'Habilitado',
+      'D': 'Inhabilitado',
+      'A': 'Archivado',
+    }
+
+    return {
+      repositories: metrics.map(metric => {
+        return {
+          id: metric.repository.id,
+          name: metric.repository.name,
+          tribe: metric.repository.tribe.name,
+          organization: metric.repository.tribe.organization.name,
+          coverage: metric.coverage + '%',
+          codeSmells: metric.code_smells,
+          bugs: metric.bugs,
+          vulnerabilities: metric.vulnerabilities,
+          hotspots: metric.hotspots,
+          verificationState: 'metric.verification_state',
+          state: stateRepository[metric.repository.state[0]]
+        }
+      })
+    }
   }
 
 

@@ -6,4 +6,4 @@ import { MockController } from './mock.controller';
   controllers: [MockController],
   providers: [MockService]
 })
-export class MockModule {}
+export class MockModule { }
