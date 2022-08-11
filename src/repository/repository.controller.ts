@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { RepositoryService } from './repository.service';
 import { CreateRepositoryDto } from './dto/create-repository.dto';
 import { UpdateRepositoryDto } from './dto/update-repository.dto';
-import { TribeDto } from './dto/tribe.dto';
+import { QueryDto } from './dto/query.dto';
 
 @Controller('repository')
 export class RepositoryController {
@@ -14,7 +14,7 @@ export class RepositoryController {
   }
 
   @Get()
-  findAll(@Query() tribeDto: TribeDto) {
+  findAll(@Query() tribeDto: QueryDto) {
     return this.repositoryService.findAll(tribeDto);
   }
 

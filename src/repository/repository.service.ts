@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateRepositoryDto } from './dto/create-repository.dto';
 import { UpdateRepositoryDto } from './dto/update-repository.dto';
-import { TribeDto } from './dto/tribe.dto';
+import { QueryDto } from './dto/query.dto';
 import { Repository as Repo } from './entities/repository.entity';
 import { Metric } from 'src/metrics/entities/metric.entity';
 import { MockService } from 'src/mock/mock.service';
@@ -21,8 +21,8 @@ export class RepositoryService {
     return 'This action adds a new repository';
   }
 
-  async findAll(tribeDto: TribeDto) {
-    const { tribe } = tribeDto;
+  async findAll(queryDto: QueryDto) {
+    const { tribe, coverage = 0, date = new Date().getFullYear(), state } = queryDto;
     const metrics = await this.dataSource.getRepository(Metric).find({
       relations: ['repository', 'repository.tribe', 'repository.tribe.organization'],
       where: {
@@ -36,7 +36,18 @@ export class RepositoryService {
 
     if (metrics.length === 0) throw new NotFoundException('La tribu no se encuentra registrada');
 
-    const reposId = metrics.map(metric => metric.repositoryId);
+    const coverageUpParameter = metrics.filter(metric => metric.coverage >= coverage);
+    if (coverageUpParameter.length === 0) throw new NotFoundException('La tribu no tiene repositorios que cumplan con la cobertura necesaria');
+
+    const isDateInThisYear = (dateRepository: string) => {
+      const year = new Date(dateRepository).getFullYear()
+      return year === date;
+    }
+
+    const reposInThisYear = coverageUpParameter.filter(({ repository }) => isDateInThisYear(repository.create_time));
+    if (reposInThisYear.length === 0) throw new NotFoundException('La tribu no tiene repositorios en el año señalado');
+
+    const reposId = reposInThisYear.map(metric => metric.repositoryId);
 
     const reposMock = this.mockService.findAll()
 
@@ -49,7 +60,7 @@ export class RepositoryService {
     }
 
     const response = {
-      repositories: metrics.map(metric => {
+      repositories: reposInThisYear.map(metric => {
         return {
           id: metric.repository.id,
           name: metric.repository.name,
@@ -61,7 +72,8 @@ export class RepositoryService {
           vulnerabilities: metric.vulnerabilities,
           hotspots: metric.hotspots,
           verificationState: 'metric.verification_state',
-          state: stateRepository[metric.repository.state[0]]
+          state: stateRepository[metric.repository.state[0]],
+          createTime: metric.repository.create_time,
         }
       })
     }
