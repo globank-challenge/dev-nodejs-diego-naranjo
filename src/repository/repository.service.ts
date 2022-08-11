@@ -18,7 +18,7 @@ export class RepositoryService {
   ) { }
 
   async findAll(queryDto: QueryDto) {
-    const { tribe, coverage = 0, date = new Date().getFullYear(), state = 'E' } = queryDto;
+    const { tribe, coverage = 75, date = new Date().getFullYear(), state = 'E' } = queryDto;
     const metrics = await this.dataSource.getRepository(Metric).find({
       relations: ['repository', 'repository.tribe', 'repository.tribe.organization'],
       where: {
@@ -30,10 +30,10 @@ export class RepositoryService {
       }
     })
 
-    if (metrics.length === 0) throw new NotFoundException('La tribu no se encuentra registrada');
+    if (metrics.length === 0) throw new NotFoundException(`La tribu con id ${tribe} no se encuentra registrada`);
 
     const coverageUpParameter = metrics.filter(metric => metric.coverage >= coverage);
-    if (coverageUpParameter.length === 0) throw new NotFoundException('La tribu no tiene repositorios que cumplan con la cobertura necesaria');
+    if (coverageUpParameter.length === 0) throw new NotFoundException(`La tribu no tiene repositorios que cumplan con cobertura del ${coverage}% o superior`);
 
     const isDateInThisYear = (dateRepository: string) => {
       const year = new Date(dateRepository).getFullYear()
@@ -41,11 +41,16 @@ export class RepositoryService {
     }
 
     const reposInThisYear = coverageUpParameter.filter(({ repository }) => isDateInThisYear(repository.create_time));
-    if (reposInThisYear.length === 0) throw new NotFoundException('La tribu no tiene repositorios en el año señalado');
+    if (reposInThisYear.length === 0) throw new NotFoundException(`La tribu no tiene repositorios creados en el año ${date}`);
+
+    const stateRepository = {
+      'E': 'Habilitado',
+      'D': 'Inhabilitado',
+      'A': 'Archivado',
+    }
 
     const reposInTheState = reposInThisYear.filter(({ repository }) => repository.state[0] === state.toUpperCase());
-    if (reposInTheState.length === 0) throw new NotFoundException('La tribu no tiene repositorios en el estado señalado');
-
+    if (reposInTheState.length === 0) throw new NotFoundException(`La tribu no tiene repositorios en el estado ${stateRepository[state.toUpperCase()]}`);
 
     const reposId = reposInTheState.map(metric => metric.repositoryId);
 
@@ -53,11 +58,6 @@ export class RepositoryService {
 
     const repositoriesWithState = reposId.map(repoId => reposMock.repositories.filter(({ id }) => id === repoId)[0])
 
-    const stateRepository = {
-      'E': 'Habilitado',
-      'D': 'Inhabilitado',
-      'A': 'Archivado',
-    }
 
     const response = {
       repositories: reposInTheState.map(metric => {
