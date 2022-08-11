@@ -1,11 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { RepositoryService } from './repository.service';
 import { CreateRepositoryDto } from './dto/create-repository.dto';
 import { UpdateRepositoryDto } from './dto/update-repository.dto';
+import { TribeDto } from './dto/tribe.dto';
 
 @Controller('repository')
 export class RepositoryController {
-  constructor(private readonly repositoryService: RepositoryService) {}
+  constructor(private readonly repositoryService: RepositoryService) { }
 
   @Post()
   create(@Body() createRepositoryDto: CreateRepositoryDto) {
@@ -13,8 +14,8 @@ export class RepositoryController {
   }
 
   @Get()
-  findAll() {
-    return this.repositoryService.findAll();
+  findAll(@Query() tribeDto: TribeDto) {
+    return this.repositoryService.findAll(tribeDto);
   }
 
   @Get(':id')

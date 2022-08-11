@@ -7,6 +7,7 @@ import { Metric } from './entities/metric.entity';
 @Module({
   controllers: [MetricsController],
   providers: [MetricsService],
-  imports: [TypeOrmModule.forFeature([Metric])]
+  imports: [TypeOrmModule.forFeature([Metric])],
+  exports: [TypeOrmModule],
 })
 export class MetricsModule { }

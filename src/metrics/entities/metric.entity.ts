@@ -1,10 +1,10 @@
 import { Repository } from "src/repository/entities/repository.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Metric {
-  @PrimaryGeneratedColumn()
-  id: number
+  @PrimaryColumn()
+  repositoryId: number
 
   @Column({
     type: "float8"
@@ -31,7 +31,7 @@ export class Metric {
   })
   code_smells: number
 
-  @OneToOne(() => Repository)
+  @OneToOne(() => Repository, { cascade: true })
   @JoinColumn()
   repository: Repository
 }
